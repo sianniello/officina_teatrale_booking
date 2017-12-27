@@ -104,5 +104,5 @@ span.seatCharts-legendDescription {
     /*max-height: 90px;*/
     /*overflow-y: scroll;*/
     overflow-x: auto;
-    width: 170px;
+    width: 100%;
 }

@@ -1,16 +1,21 @@
-let firstSeatLabel = 1;
-
 $(document).ready(function() {
+    let booking = {
+        user: '',
+        seats: [],
+        total: 0
+    };
     let $cart = $('#selected-seats'),
         $counter = $('#counter'),
         $total = $('#total'),
+
         sc = $('#seat-map').seatCharts({
             map: [
-                'ff_frrf_ff',
-                'ff_ffff_ff',
-                'ff_ffff_ff',
-                'ff_ffff_ff',
-                'ff_fbbc_ff'
+                'ffff_ffrrrrff_ffff',
+                'ffff_ffffffff_ffff',
+                'ffff_ffffffff_ffff',
+                '__________________',
+                'ffff_ffffffff_ffff',
+                'ffff_fffffbbc_ffff'
             ],
             seats: {
                 f: {
@@ -28,11 +33,11 @@ $(document).ready(function() {
             },
             naming : {
                 top : true,
-                columns: ['1', '2', ' ', '3', '4', '5', '6', ' ', '7', '8'],
-                rows: ['A', 'B', 'C', 'D', 'E'],
-                getLabel : function (character, row, column) {
-                    return firstSeatLabel++;
-                },
+                columns: [
+                    '1', '2', '3', '4', ' ',
+                    '5', '6', '7', '8', '9', '10', '11', '12', ' ',
+                    '13', '14', '15', '16'],
+                rows: ['A', 'B', 'C', ' ', 'D', 'E'],
             },
             legend : {
                 node : $('#legend'),
@@ -49,7 +54,7 @@ $(document).ready(function() {
 
                 if (this.status() === 'available') {
                     //let's create a new <li> which we'll add to the cart items
-                    $('<li>Posto '+this.data().category+' #'+this.settings.label+': <b>€ <span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                    $('<li>Posto '+this.data().category+' #'+this.settings.id+': <b>€ <span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                         .attr('id', 'cart-item-'+this.settings.id)
                         .data('seatId', this.settings.id)
                         .appendTo($cart);
@@ -60,9 +65,10 @@ $(document).ready(function() {
                      * .find function will not find the current seat, because it will change its stauts only after return
                      * 'selected'. This is why we have to add 1 to the length and the current seat price to the total.
                      */
-                    $counter.text(sc.find('selected').length+1);
 
-                    recalculateTotal($total);
+                    booking.total = recalculateTotal($total);
+                    booking.seats.push({id: this.settings.id, type: 'adulto'});
+                    $counter.text(booking.seats.length);
 
                     return 'selected';
 
@@ -70,31 +76,27 @@ $(document).ready(function() {
 
                     this.data().category = 'bambino';
                     this.data().price = 0;
-
-                    let item = $('<li>Posto '+this.data().category+' #'+this.settings.label+': <b>€ <span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                    let item = $('<li>Posto '+this.data().category+' #'+this.settings.id+': <b>€ <span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                         .attr('id', 'cart-item-'+this.settings.id)
                         .data('seatId', this.settings.id);
 
-                    $cart.find('li#cart-item-'+this.settings.id).html(item);
+                    $cart.find('li#cart-item-'+this.settings.id).remove();
+                    item.appendTo($cart);
 
-                    recalculateTotal($total);
+                    booking.total = recalculateTotal($total);
+                    booking.seats.find(item => {return item.id === this.settings.id}).type = 'bambino';
 
                     return 'selected_child';
 
                 } else if (this.status() === 'selected_child') {
 
-                    //update the counter
-                    let count = sc.find('selected').length;
-
-                    if (count > 1)
-                        $counter.text(sc.find('selected').length-1);
-                    else
-                        $counter.text('0');
-
                     //remove the item from our cart
                     $('#cart-item-'+this.settings.id).remove();
 
-                    recalculateTotal($total);
+                    booking.total = recalculateTotal($total);
+                    booking.seats.pop();
+
+                    $counter.text(booking.seats.length);
 
                     //seat has been vacated
                     return 'available';
@@ -113,12 +115,17 @@ $(document).ready(function() {
     //this will handle "[cancel]" link clicks
     $cart.on('click', '.cancel-cart-item', function () {
         //let's just trigger Click event on the appropriate seat, so we don't have to repeat the logic here
-        sc.get($(this).parents('li:first').data('seatId')).click();
+        $(this).closest('li').remove();
+        let si = $(this).parents('li:first').data('seatId');
 
-        let text = $(this).parents('li:first').text();
+        console.log(si);
 
-        if (text.includes('adulto'))
-            sc.get($(this).parents('li:first').data('seatId')).click();
+        recalculateTotal($total);
+
+    });
+
+    $('.checkout-button').on('click', () => {
+        alert(JSON.stringify(booking));
     });
 
     sc.find('r').status('unavailable');
@@ -134,4 +141,6 @@ function recalculateTotal($total) {
     $('span' + '.price').each(function () {total += parseInt(this.innerText)});
 
     $total.text(total);
+    return total;
 }
+
