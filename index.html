@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officina Teatrale Booking</title>
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <link href="css/jquery.seat-charts.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="container">
+        <div id="seat-map" class="seatCharts-container" tabindex="0"></div>
+        <div class="booking-details">
+            <h2>Dettagli prenotazione</h2>
+
+            <h3>Posti selezionati (<span id="counter"></span>):</h3>
+            <ul id="selected-seats"></ul>
+
+            Totale: <b>€ <span id="total">0</span></b>
+
+            <button class="checkout-button">Checkout &raquo;</button>
+
+            <div id="legend"></div>
+        </div>
+    </div>
+</div>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="js/jquery.seat-charts.js"></script>
+<script src="js/booking.js"></script>
+</body>
+</html>
