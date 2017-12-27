@@ -49,7 +49,7 @@ $(document).ready(function() {
 
                 if (this.status() === 'available') {
                     //let's create a new <li> which we'll add to the cart items
-                    $('<li>Posto '+this.data().category+' #'+this.settings.label+': <b>€ '+this.data().price+'</b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                    $('<li>Posto '+this.data().category+' #'+this.settings.label+': <b>€ <span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                         .attr('id', 'cart-item-'+this.settings.id)
                         .data('seatId', this.settings.id)
                         .appendTo($cart);
@@ -62,7 +62,7 @@ $(document).ready(function() {
                      */
                     $counter.text(sc.find('selected').length+1);
 
-                    recalculateTotal(sc, $total);
+                    recalculateTotal($total);
 
                     return 'selected';
 
@@ -71,13 +71,13 @@ $(document).ready(function() {
                     this.data().category = 'bambino';
                     this.data().price = 0;
 
-                    let item = $('<li>Posto '+this.data().category+' #'+this.settings.label+': <b>€<span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                    let item = $('<li>Posto '+this.data().category+' #'+this.settings.label+': <b>€ <span class="price">'+this.data().price+'</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                         .attr('id', 'cart-item-'+this.settings.id)
                         .data('seatId', this.settings.id);
 
                     $cart.find('li#cart-item-'+this.settings.id).html(item);
 
-                    recalculateTotal(sc, $total);
+                    recalculateTotal($total);
 
                     return 'selected_child';
 
@@ -94,7 +94,7 @@ $(document).ready(function() {
                     //remove the item from our cart
                     $('#cart-item-'+this.settings.id).remove();
 
-                    recalculateTotal(sc, $total);
+                    recalculateTotal($total);
 
                     //seat has been vacated
                     return 'available';
@@ -128,12 +128,10 @@ $(document).ready(function() {
 });
 
 
-function recalculateTotal(sc, $total) {
+function recalculateTotal($total) {
     let total = 0;
     //basically find every selected seat and sum its price
-    sc.find('selected').each(function () {
-        total += this.data().price;
-    });
+    $('span' + '.price').each(function () {total += parseInt(this.innerText)});
 
     $total.text(total);
 }
