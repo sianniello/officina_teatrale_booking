@@ -3,10 +3,9 @@ $(document).ready(function() {
     let map = [];
 
     $.ajax({
-        url: 'localhost:5000/booking',
+        url: 'http://stenomyapp.ddns.net/bookings:5000',
         type: 'GET',
-        data: booking,
-        success: data => { map = data; }
+        success: data => { map = data; alert(map)}
     });
 
     let booking = {
