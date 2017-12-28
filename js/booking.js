@@ -15,6 +15,8 @@ $(document).ready(function() {
                 'ffff_ffffffff_ffff',
                 '__________________',
                 'ffff_ffffffff_ffff',
+                'ffff_ffffffff_ffff',
+                'ffff_ffffffff_ffff',
                 'ffff_fffffbbc_ffff'
             ],
             seats: {
@@ -37,7 +39,7 @@ $(document).ready(function() {
                     '1', '2', '3', '4', ' ',
                     '5', '6', '7', '8', '9', '10', '11', '12', ' ',
                     '13', '14', '15', '16'],
-                rows: ['A', 'B', 'C', ' ', 'D', 'E'],
+                rows: ['A', 'B', 'C', ' ', 'D', 'E', 'F', 'G'],
             },
             legend : {
                 node : $('#legend'),
@@ -115,17 +117,27 @@ $(document).ready(function() {
     //this will handle "[cancel]" link clicks
     $cart.on('click', '.cancel-cart-item', function () {
         //let's just trigger Click event on the appropriate seat, so we don't have to repeat the logic here
+        let seat_ID = $(this).parents('li:first').data('seatId');
         $(this).closest('li').remove();
-        let si = $(this).parents('li:first').data('seatId');
 
-        console.log(si);
+        console.log(sc.get(seat_ID));
+        sc.status(seat_ID, 'available');
 
+        let index = booking.seats.indexOf(booking.seats.find(item => {return item.id === seat_ID}));
+        booking.seats.splice(index, 1);
+        $counter.text(booking.seats.length);
         recalculateTotal($total);
 
     });
 
     $('.checkout-button').on('click', () => {
-        alert(JSON.stringify(booking));
+        console.log(JSON.stringify(booking));
+        $.ajax({
+            url: 'localhost:5000/booking',
+            type: 'PUT',
+            data: booking,
+            success: data => { alert('Prenotazione effettuata con successo') }
+        });
     });
 
     sc.find('r').status('unavailable');
