@@ -134,7 +134,7 @@ $(document).ready(function() {
         console.log(JSON.stringify(booking));
         $.ajax({
             url: 'localhost:5000/booking',
-            type: 'PUT',
+            type: 'POST',
             data: booking,
             success: data => { alert('Prenotazione effettuata con successo') }
         });
