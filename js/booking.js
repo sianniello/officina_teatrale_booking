@@ -1,4 +1,14 @@
 $(document).ready(function() {
+
+    let map = [];
+
+    $.ajax({
+        url: 'localhost:5000/booking',
+        type: 'GET',
+        data: booking,
+        success: data => { map = data; }
+    });
+
     let booking = {
         user: '',
         seats: [],
