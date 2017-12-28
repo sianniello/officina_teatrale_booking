@@ -1,18 +1,29 @@
-$(document).ready(function() {
+$(document).ready(function()
+{
 
     let map = [];
 
     $.ajax({
-        url: 'http://stenomyapp.ddns.net:5000/bookings',
+        // url: 'http://stenomyapp.ddns.net:5000/bookings',
+        url: 'http://localhost:5000/bookings',
+        data: {"Access-Control-Allow-Origin": tr},
         type: 'GET',
-        success: data => {alert(data); map = data; alert(map)}
+        success: data =>
+        {
+            console.log(data);
+            start(data)
+        }
     });
+});
+
+function start(map) {
 
     let booking = {
         user: '',
         seats: [],
         total: 0
     };
+
     let $cart = $('#selected-seats'),
         $counter = $('#counter'),
         $total = $('#total'),
@@ -153,7 +164,7 @@ $(document).ready(function() {
     sc.find('c').status('unavailable');
     sc.find('b').status('unavailable');
 
-});
+}
 
 
 function recalculateTotal($total) {
