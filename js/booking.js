@@ -1,21 +1,42 @@
+let url = 'http://officinateatrale.hopto.org:5000/bookings';
+
 $(document).ready(function()
 {
-
-    let map = [];
-
     $.ajax({
-        // url: 'http://stenomyapp.ddns.net:5000/bookings',
-        url: 'http://localhost:5000/bookings',
+        url: url,
         type: 'GET',
         success: data =>
         {
-            console.log("Response" + data);
+            console.log(data);
+            $('.booking-details').show();
             start(data)
-        }
+        },
+        error: e => { console.log(e.message) }
     });
 });
 
-function start(map) {
+function seat_formatting(seat_map, rows, columns)
+{
+    rows.forEach((row, row_index) =>
+        {
+            if (row === ' ')
+                seat_map.splice(row_index, 0, '_'.repeat(columns.length).split(""));
+            else
+                columns.forEach((col, col_index) =>
+                    {
+                        if (col === ' ')
+                            seat_map[row_index].splice(col_index, 0, '_')
+                    }
+                );
+            seat_map[row_index] = seat_map[row_index].toString()
+        }
+    );
+
+    console.log(seat_map);
+    return seat_map;
+}
+
+function start(data) {
 
     let booking = {
         user: '',
@@ -23,21 +44,14 @@ function start(map) {
         total: 0
     };
 
+    let map = seat_formatting(data.seat_map, data.rows, data.columns);
+
     let $cart = $('#selected-seats'),
         $counter = $('#counter'),
         $total = $('#total'),
 
         sc = $('#seat-map').seatCharts({
-            map: [
-                'ffff_ffrrrrff_ffff',
-                'ffff_ffffffff_ffff',
-                'ffff_ffffffff_ffff',
-                '__________________',
-                'ffff_ffffffff_ffff',
-                'ffff_ffffffff_ffff',
-                'ffff_ffffffff_ffff',
-                'ffff_fffffbbc_ffff'
-            ],
+            map: map,
             seats: {
                 f: {
                     price   : 12,
@@ -54,11 +68,8 @@ function start(map) {
             },
             naming : {
                 top : true,
-                columns: [
-                    '1', '2', '3', '4', ' ',
-                    '5', '6', '7', '8', '9', '10', '11', '12', ' ',
-                    '13', '14', '15', '16'],
-                rows: ['A', 'B', 'C', ' ', 'D', 'E', 'F', 'G'],
+                columns: data.columns,
+                rows: data.rows,
             },
             legend : {
                 node : $('#legend'),
@@ -150,12 +161,18 @@ function start(map) {
     });
 
     $('.checkout-button').on('click', () => {
-        console.log(JSON.stringify(booking));
+        let data = JSON.stringify(booking);
+        console.log(data);
         $.ajax({
-            url: 'localhost:5000/booking',
-            type: 'POST',
+            type: "POST",
+            contentType: "application/json",
+            url: url,
             data: booking,
-            success: data => { alert('Prenotazione effettuata con successo') }
+            dataType: "json",
+            success: (data, status) =>
+            {
+                alert("Data: " + "\nStatus: " + status);
+            }
         });
     });
 

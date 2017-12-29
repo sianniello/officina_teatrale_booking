@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <title>Officina Teatrale Booking</title>
     <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
-    <link href="css/jquery.seat-charts.css" rel="stylesheet" type="text/css">
-    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/jquery.seat-charts.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css">
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script>
+        $(document).load(() =>
+        {
+            $('.booking-details').hide();
+        });
+    </script>
+
 </head>
 <body>
+<!--<div class="se-pre-con"></div>-->
 <div class="wrapper">
     <div class="container">
         <div id="seat-map" class="seatCharts-container" tabindex="0"></div>
@@ -25,8 +36,7 @@
         </div>
     </div>
 </div>
-<script src="js/jquery.js"></script>
-<script src="js/jquery.seat-charts.js"></script>
-<script src="js/booking.js"></script>
+<script src="{{ url_for('static', filename='js/jquery.seat-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
 </body>
 </html>
