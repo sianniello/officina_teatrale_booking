@@ -161,19 +161,23 @@ function start(data) {
     });
 
     $('.checkout-button').on('click', () => {
-        let data = JSON.stringify(booking);
-        console.log(data);
         $.ajax({
             type: "POST",
-            contentType: "application/json",
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
             url: url,
-            data: booking,
-            dataType: "json",
+            data: JSON.stringify(booking),
             success: (data, status) =>
             {
-                alert("Data: " + "\nStatus: " + status);
+                alert("Data: " + data + "\nStatus: " + status);
+                location.reload();
+            },
+            error: (error, status) =>
+            {
+                alert("Error: " + status);
+                location.reload();
             }
-        });
+        })
     });
 
     sc.find('r').status('unavailable');
