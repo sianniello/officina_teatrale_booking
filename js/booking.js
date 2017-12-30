@@ -99,7 +99,7 @@ function start(data) {
                      */
 
                     booking.total = recalculateTotal($total);
-                    booking.seats.push({id: this.settings.id, type: 'adulto'});
+                    booking.seats.push({id: this.settings.id, type: 'unavailable'});
                     $counter.text(booking.seats.length);
 
                     return 'selected';
@@ -116,7 +116,7 @@ function start(data) {
                     item.appendTo($cart);
 
                     booking.total = recalculateTotal($total);
-                    booking.seats.find(item => {return item.id === this.settings.id}).type = 'bambino';
+                    booking.seats.find(item => {return item.id === this.settings.id}).type = 'unavailable_child';
 
                     return 'selected_child';
 
@@ -161,15 +161,23 @@ function start(data) {
     });
 
     $('.checkout-button').on('click', () => {
+        $('.container').blur();
         $.ajax({
             type: "POST",
             contentType:"application/json; charset=utf-8",
-            dataType:"json",
             url: url,
             data: JSON.stringify(booking),
-            success: (data, status) =>
+            success: data =>
             {
-                alert("Data: " + data + "\nStatus: " + status);
+                alert(JSON.stringify(data));
+                let resp_string = "";
+                data.seats.forEach(seat =>
+                    {
+                        let type = seat['type']==='unavailable'? 'adulto' : 'bambino';
+                        resp_string += seat['id'] + " - " + type + "\n";
+                    }
+                );
+                alert("Prenotazione effettuata\n" + resp_string);
                 location.reload();
             },
             error: (error, status) =>
