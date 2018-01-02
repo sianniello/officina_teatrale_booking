@@ -3,9 +3,10 @@ let url = 'https://i2pn7or762.execute-api.us-east-1.amazonaws.com/prod/';
 // let url = 'http://localhost:5000/bookings';
 $(document).ready(function()
 {
-    if (!sessionStorage.getItem('user')) { $('#form_id').show(); $('.container').hide(); }
+    if (!sessionStorage.getItem('user')) { $('.form').show(); $('.wrapper').hide(); }
     else {
-        $('#form_id').hide();
+        $('.booking-details').hide();
+        $('.form').hide();
         $('.loader').show();
         $.ajax({
             url: url + "MongoDB_Atlas_GetDocs",
@@ -13,6 +14,7 @@ $(document).ready(function()
             type: 'GET',
             success: data => {
                 $('.loader').hide();
+                $('.booking-details').show();
                 $('.wrapper').show();
                 console.log(data);
                 start(data)
@@ -103,10 +105,17 @@ function start(data) {
                     this.data().category = 'adulto';
                     this.data().price = 12;
 
+                    let row = this.settings.id.substring(0,1);
+                    let sector = "";
+                    switch (this.settings.id.substring(2, 3)) {
+                        case "S": sector = "sinistro"; break;
+                        case "C": sector = "centrale"; break;
+                        case "D": sector = "destro"; break;
+                    }
+
+                    let seat = this.settings.id.substring(3, this.settings.id.length);
+
                     if (this.status() === 'available') {
-                        let row = this.settings.id.substring(0,1);
-                        let sector = this.settings.id.substring(2,3);
-                        let seat = this.settings.id.substring(3,4);
                         //let's create a new <li> which we'll add to the cart items
                         $('<li>Posto ' + this.data().category + ' fila: ' + row + ' settore: '+ sector + ' posto: ' + seat + ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
@@ -131,7 +140,7 @@ function start(data) {
 
                         this.data().category = 'bambino';
                         this.data().price = 0;
-                        let item = $('<li>Posto ' + this.data().category + ' #' + this.settings.id + ': <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                        let item = $('<li>Posto ' + this.data().category + ' fila: ' + row + ' settore: '+ sector + ' posto: ' + seat + ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
                             .addClass('li-item')
                             .data('seatId', this.settings.id);
@@ -177,7 +186,6 @@ function start(data) {
         let seat_ID = $(this).parents('li:first').data('seatId');
         $(this).closest('li').remove();
 
-        console.log(sc.get(seat_ID));
         sc.status(seat_ID, 'available');
 
         let index = booking.seats.indexOf(booking.seats.find(item => {return item.id === seat_ID}));
@@ -204,7 +212,18 @@ function start(data) {
                         data.seats.forEach(seat =>
                             {
                                 let type = seat['type']==='unavailable'? 'adulto' : 'bambino';
-                                resp_string += seat['id'] + " - " + type + "\n";
+                                let row = seat['id'].substring(0,1);
+                                let sector = "";
+                                switch (seat['id'].substring(2, 3)) {
+                                    case "S": sector = "sinistro"; break;
+                                    case "C": sector = "centrale"; break;
+                                    case "D": sector = "destro"; break;
+                                }
+
+                                let s = seat['id'].substring(3,seat['id'].length);
+                                resp_string +=  "Fila " + row + " - " +
+                                                "Settore " + sector + " - " +
+                                                "Posto " + s + " " + type + "\n";
                             }
                         );
                         alert("Prenotazione effettuata\n" + resp_string);
