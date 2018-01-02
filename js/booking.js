@@ -1,21 +1,28 @@
 let url = 'https://i2pn7or762.execute-api.us-east-1.amazonaws.com/prod/';
 // let url = 'http://officinateatrale.hopto.org:5000/bookings';
 // let url = 'http://localhost:5000/bookings';
-
 $(document).ready(function()
 {
-    $.ajax({
-        url: url + "MongoDB_Atlas_GetDocs",
-        contentType: "application/json; charset=utf-8",
-        type: 'GET',
-        success: data =>
-        {
-            console.log(data);
-            $('.loader').hide();
-            start(data)
-        },
-        error: e => { $('.loader').hide(); console.log(e.message);}
-    });
+    if (!sessionStorage.getItem('user')) { $('#form_id').show(); $('.container').hide(); }
+    else {
+        $('#form_id').hide();
+        $('.loader').show();
+        $.ajax({
+            url: url + "MongoDB_Atlas_GetDocs",
+            contentType: "application/json; charset=utf-8",
+            type: 'GET',
+            success: data => {
+                $('.loader').hide();
+                $('.wrapper').show();
+                console.log(data);
+                start(data)
+            },
+            error: e => {
+                $('.loader').hide();
+                console.log(e.message);
+            }
+        });
+    }
 });
 
 function seat_formatting(seat_map, rows, columns)
@@ -23,14 +30,14 @@ function seat_formatting(seat_map, rows, columns)
     rows.forEach((row, row_index) =>
         {
             if (row === ' ')
-                seat_map.splice(row_index, 0, '_'.repeat(columns.length).split(""));
+                seat_map.splice(row_index, 1, '_'.repeat(columns.length).split(""));
             else
-                columns.forEach((col, col_index) =>
-                    {
-                        if (col === ' ')
-                            seat_map[row_index].splice(col_index, 0, '_')
+                columns.forEach((col, col_index) => {
+                        if(col === "")
+                            seat_map[row_index].splice(col_index, 0, '_');
                     }
                 );
+            console.log(seat_map[row_index].length);
             seat_map[row_index] = seat_map[row_index].toString()
         }
     );
@@ -48,7 +55,13 @@ function start(data) {
         total: 0
     };
 
-    let map = seat_formatting(data['seat_map'], data.rows, data.columns);
+    let columns = [
+        "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "",
+        "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15", "",
+        "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12",
+    ];
+    let map = seat_formatting(data['seat_map'], data.rows, columns);
+
 
     let $cart = $('#selected-seats'),
         $counter = $('#counter'),
@@ -72,7 +85,7 @@ function start(data) {
             },
             naming : {
                 top : true,
-                columns: data.columns,
+                columns: columns,
                 rows: data.rows,
             },
             legend : {
@@ -91,10 +104,14 @@ function start(data) {
                     this.data().price = 12;
 
                     if (this.status() === 'available') {
+                        let row = this.settings.id.substring(0,1);
+                        let sector = this.settings.id.substring(2,3);
+                        let seat = this.settings.id.substring(3,4);
                         //let's create a new <li> which we'll add to the cart items
-                        $('<li>Posto ' + this.data().category + ' #' + this.settings.id + ': <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                        $('<li>Posto ' + this.data().category + ' fila: ' + row + ' settore: '+ sector + ' posto: ' + seat + ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
                             .data('seatId', this.settings.id)
+                            .addClass('li-item')
                             .appendTo($cart);
 
                         /*
@@ -116,6 +133,7 @@ function start(data) {
                         this.data().price = 0;
                         let item = $('<li>Posto ' + this.data().category + ' #' + this.settings.id + ': <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
+                            .addClass('li-item')
                             .data('seatId', this.settings.id);
 
                         $cart.find('li#cart-item-' + this.settings.id).remove();
@@ -170,7 +188,7 @@ function start(data) {
     });
 
     $('.checkout-button').on('click', () => {
-        if (booking.seats.length && sessionStorage.getItem('user')) {
+        if (booking.seats.length && sessionStorage.getItem('user') !== '') {
             $('.loader').show();
             booking.timestamp = new Date().toISOString();
             booking.user = sessionStorage.getItem('user');

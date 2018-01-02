@@ -11,15 +11,15 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
 </head>
 <body>
-<form id="form_id" method="post" name="myform">
+<form id="form_id" method="post" name="myform" hidden>
     <label>User Name :</label>
     <input type="text" name="username" id="username"/>
     <label>Password :</label>
     <input type="password" name="password" id="password"/>
     <input type="button" value="Login" id="submit" onclick="validate()"/>
 </form>
-<div class="wrapper" hidden>
-    <div class="loader" hidden></div>
+<div class="loader" hidden></div>
+<div class="wrapper">
     <div class="container">
         <div id="seat-map" class="seatCharts-container" tabindex="0"></div>
         <div class="booking-details">
