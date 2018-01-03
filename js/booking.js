@@ -33,23 +33,26 @@ $(document).ready(function()
 
 function seat_formatting(seat_map, rows, columns)
 {
-    rows.forEach((row, row_index) =>
-        {
-            let row_len = seat_map[row_index].length;
+    rows.forEach((row, row_index) => {
 
             if (row === ' ') {
-                seat_map.splice(row_index, 1, '_'.repeat(row_len).split(""));
+                seat_map.splice(row_index, 1, '_'.repeat(16 + 15 + 16).split(""));
                 seat_map[row_index] = seat_map[row_index].join("");
             }
-            else {
-                let col = columns[row_index];
-                let sx = seat_map[row_index].slice(0, col[0]);
-                let cn = seat_map[row_index].slice(col[0], col[0] + col[1]);
-                let dx = seat_map[row_index].slice(col[1], col[1] + col[2]);
-                let sx_str = sx.join("").padEnd(16+1, "_");
-                let cn_str = cn.join("").padEnd(15+1, "_");
-                let dx_str = dx.join("").padEnd(16+1, "_");
-                seat_map[row_index] = sx_str + cn_str + dx_str;
+        }
+    );
+    seat_map.forEach((seat_row, index) =>
+        {
+            if (seat_row[0] !== "_") {
+                let col = columns[index];
+                let sx = seat_row.slice(0, col[0]);
+                let cn = seat_row.slice(col[0], col[0] + col[1]);
+                let dx = seat_row.slice(col[1], col[1] + col[2]);
+                let sx_str = sx.join("").padEnd(16 + 1, "_");
+                let cn_str = cn.join("").padEnd(15 + 1, "_");
+                let dx_str = dx.join("").padEnd(16 + 1, "_");
+                seat_row = sx_str + cn_str + dx_str;
+                seat_map[index] = seat_row;
             }
         }
     );
@@ -126,7 +129,11 @@ function start(data) {
 
                     if (this.status() === 'available') {
                         //let's create a new <li> which we'll add to the cart items
-                        $('<li>Posto ' + this.data().category + ' fila: ' + row + ' settore: '+ sector + ' posto: ' + seat + ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                        $('<li>Posto ' + this.data().category +
+                            ' Fila: ' + row +
+                            ' - Settore: '+ sector +
+                            ' - Posto: ' + seat +
+                            ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
                             .data('seatId', this.settings.id)
                             .addClass('li-item')
@@ -143,13 +150,20 @@ function start(data) {
                         booking.seats.push({id: this.settings.id, type: 'unavailable'});
                         $counter.text(booking.seats.length);
 
+                        if (booking.seats.length || parseInt($counter.text()) > 0) $('.checkout-button').removeClass('hidden');
+                        else $('.checkout-button').addClass('hidden');
+
                         return 'selected';
 
                     } else if (this.status() === 'selected') {
 
                         this.data().category = 'bambino';
                         this.data().price = 0;
-                        let item = $('<li>Posto ' + this.data().category + ' fila: ' + row + ' settore: '+ sector + ' posto: ' + seat + ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                        let item = $('<li>Posto ' + this.data().category +
+                            ' Fila: ' + row +
+                            ' - settore: '+ sector +
+                            ' - posto: ' + seat +
+                            ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
                             .addClass('li-item')
                             .data('seatId', this.settings.id);
@@ -158,8 +172,8 @@ function start(data) {
                         item.appendTo($cart);
 
                         booking.total = recalculateTotal($total);
-                        booking.seats.find(item => {
-                            return item.id === this.settings.id
+                        booking.seats.find(s => {
+                            return s.id === this.settings.id
                         }).type = 'unavailable_child';
 
                         return 'selected_child';
@@ -170,15 +184,20 @@ function start(data) {
                         $('#cart-item-' + this.settings.id).remove();
 
                         booking.total = recalculateTotal($total);
-                        booking.seats.pop();
+                        let seatToRemove = booking.seats.find(seat => seat.id === this.settings.id);
+                        booking.seats.splice(booking.seats.indexOf(seatToRemove), 1);
 
                         $counter.text(booking.seats.length);
+
+                        if (booking.seats.length || parseInt($counter.text()) > 0) $('.checkout-button').removeClass('hidden');
+                        else $('.checkout-button').addClass('hidden');
 
                         //seat has been vacated
                         return 'available';
 
                     } else if (this.status() === 'unavailable') {
                         //seat has been already booked
+
                         return 'unavailable';
 
                     } else {
@@ -199,9 +218,12 @@ function start(data) {
 
         let index = booking.seats.indexOf(booking.seats.find(item => {return item.id === seat_ID}));
         booking.seats.splice(index, 1);
+
+        if (booking.seats.length === 0) $('.checkout-button').addClass('hidden');
+        else $('.checkout-button').removeClass('hidden');
+
         $counter.text(booking.seats.length);
         recalculateTotal($total);
-
     });
 
     $('.checkout-button').on('click', () => {
@@ -210,6 +232,7 @@ function start(data) {
             $('.loader').show();
             booking.timestamp = new Date().toISOString();
             booking.user = sessionStorage.getItem('user');
+            booking.seats.forEach(seat => {seat.id = seat.id.replace("_", "")});
             $.ajax({
                     type: "POST",
                     contentType:"application/json; charset=utf-8",

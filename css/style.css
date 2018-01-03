@@ -33,11 +33,11 @@ a {
     height: 401px;
     font-size: 25px;
 }
-.booking-details h2 {
+.booking-details {
     margin: 25px 0 20px 0;
     font-size: 27px;
 }
-.booking-details h3 {
+.booking-details {
     margin: 5px 5px 0 0;
     font-size: 40px;
 }
@@ -94,7 +94,12 @@ div.seatCharts-legend {
 }
 ul.seatCharts-legendList {
     padding-left: 0;
-    font-size: 30px;
+    font-size: 25px;
+}
+
+.li-item {
+    width: 90%;
+    font-size: 35px;
 }
 span.seatCharts-legendDescription {
     margin-left: 5px;
@@ -104,7 +109,9 @@ span.seatCharts-legendDescription {
     display: block;
     margin: 20px auto;
     font-size: 35px;
-    width: 90%;
+    width: 40%;
+    background-color: lime;
+    border-radius: 8px;
 }
 #selected-seats {
     /*max-height: 90px;*/
@@ -163,10 +170,23 @@ body{
         font-size: 20px;
     }
     .box-inner{
-        height: 400px;
+        height: 500px;
     }
-    .prenotation-details-text {
-        font-size: 2em;
+    .booking-details-text {
+        font-size: 1em;
+    }
+    .total-text {
+        font-size: 1em;
+    }
+    .selected-seats-text {
+        font-size: 1em;
+    }
+    .seatCharts-legendDescription {
+        font-size: 1em;
+    }
+    .checkout-button {
+        width: fit-content;
+        margin: auto 10px;
     }
 }
 
@@ -239,4 +259,8 @@ body {
     width: 100px;
     height: 100px;
     background-color: #ccc;
+}
+
+.hidden {
+    display: none;
 }
