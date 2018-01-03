@@ -31,6 +31,7 @@ a {
     margin-left: 35px;
     position: relative;
     height: 401px;
+    font-size: 25px;
 }
 .booking-details h2 {
     margin: 25px 0 20px 0;
@@ -93,7 +94,7 @@ div.seatCharts-legend {
 }
 ul.seatCharts-legendList {
     padding-left: 0;
-    font-size: 40px;
+    font-size: 30px;
 }
 span.seatCharts-legendDescription {
     margin-left: 5px;
@@ -101,8 +102,9 @@ span.seatCharts-legendDescription {
 }
 .checkout-button {
     display: block;
-    margin: 10px 0;
-    font-size: 60px;
+    margin: 20px auto;
+    font-size: 35px;
+    width: 90%;
 }
 #selected-seats {
     /*max-height: 90px;*/
@@ -146,11 +148,28 @@ body{
     z-index: 1;
     background: #FFFFFF;
     max-width: 80%;
-    margin: 50% auto 100px;
+    margin: 15% auto auto;
     padding: 45px;
     text-align: center;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
+
+@media(min-width:1025px){
+    .form {
+        max-width: 40%;
+        margin: 10% auto auto;
+    }
+    .form input {
+        font-size: 20px;
+    }
+    .box-inner{
+        height: 400px;
+    }
+    .prenotation-details-text {
+        font-size: 2em;
+    }
+}
+
 .form input {
     font-family: "Roboto", sans-serif;
     outline: 0;
@@ -206,7 +225,18 @@ body {
 
 .box-inner
 {
-    width: 1800px;
-    margin:25px 24px 0;
+    width: max-content;
+    margin:10px 24px 0;
     padding-right:2px
+}
+
+.blur {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
 }

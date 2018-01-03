@@ -1,6 +1,10 @@
 let url = 'https://i2pn7or762.execute-api.us-east-1.amazonaws.com/prod/';
 // let url = 'http://officinateatrale.hopto.org:5000/bookings';
 // let url = 'http://localhost:5000/bookings';
+
+$('.form').show();
+$('.wrapper').hide();
+
 $(document).ready(function()
 {
     if (!sessionStorage.getItem('user')) { $('.form').show(); $('.wrapper').hide(); }
@@ -31,19 +35,24 @@ function seat_formatting(seat_map, rows, columns)
 {
     rows.forEach((row, row_index) =>
         {
-            if (row === ' ')
-                seat_map.splice(row_index, 1, '_'.repeat(columns.length).split(""));
-            else
-                columns.forEach((col, col_index) => {
-                        if(col === "")
-                            seat_map[row_index].splice(col_index, 0, '_');
-                    }
-                );
-            console.log(seat_map[row_index].length);
-            seat_map[row_index] = seat_map[row_index].toString()
+            let row_len = seat_map[row_index].length;
+
+            if (row === ' ') {
+                seat_map.splice(row_index, 1, '_'.repeat(row_len).split(""));
+                seat_map[row_index] = seat_map[row_index].join("");
+            }
+            else {
+                let col = columns[row_index];
+                let sx = seat_map[row_index].slice(0, col[0]);
+                let cn = seat_map[row_index].slice(col[0], col[0] + col[1]);
+                let dx = seat_map[row_index].slice(col[1], col[1] + col[2]);
+                let sx_str = sx.join("").padEnd(16+1, "_");
+                let cn_str = cn.join("").padEnd(15+1, "_");
+                let dx_str = dx.join("").padEnd(16+1, "_");
+                seat_map[row_index] = sx_str + cn_str + dx_str;
+            }
         }
     );
-
     console.log(seat_map);
     return seat_map;
 }
@@ -58,11 +67,11 @@ function start(data) {
     };
 
     let columns = [
-        "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "",
+        "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16", "",
         "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15", "",
-        "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12",
+        "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15", "D16",
     ];
-    let map = seat_formatting(data['seat_map'], data.rows, columns);
+    let map = seat_formatting(data['seat_map'], data.rows, data.columns);
 
 
     let $cart = $('#selected-seats'),
@@ -197,6 +206,7 @@ function start(data) {
 
     $('.checkout-button').on('click', () => {
         if (booking.seats.length && sessionStorage.getItem('user') !== '') {
+            $('.wrapper').hide();
             $('.loader').show();
             booking.timestamp = new Date().toISOString();
             booking.user = sessionStorage.getItem('user');
@@ -222,8 +232,8 @@ function start(data) {
 
                                 let s = seat['id'].substring(3,seat['id'].length);
                                 resp_string +=  "Fila " + row + " - " +
-                                                "Settore " + sector + " - " +
-                                                "Posto " + s + " " + type + "\n";
+                                    "Settore " + sector + " - " +
+                                    "Posto " + s + " " + type + "\n";
                             }
                         );
                         alert("Prenotazione effettuata\n" + resp_string);

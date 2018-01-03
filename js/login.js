@@ -2,6 +2,7 @@
 function validate(){
     $('.loader').show();
     $('.booking-details').hide();
+    $('.form').addClass('blur');
     let username = $('#username').val();
     let password = $("input[name='password']").val();
     let userdata = {username, password};
@@ -9,8 +10,11 @@ function validate(){
     $.getJSON(url + "MongoDB_Atlas_CheckLogin", userdata, data =>
         {
             if (data){
+                $('.loader').hide();
                 sessionStorage.setItem('user', username);
-                alert("Accesso effettuato, benvenuto");
+                let suxfiss = data.sex === 'M'? 'o ' : 'a ';
+                alert("Accesso effettuato, benvenut" + suxfiss +
+                    data['full_name'].split(" ")[0]);
                 location.reload();
             }
             else
