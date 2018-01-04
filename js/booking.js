@@ -250,16 +250,16 @@ function start(data) {
                         let resp_string = "";
                         data.seats.forEach(seat =>
                             {
-                                let type = seat['type']==='unavailable'? 'adulto' : 'bambino';
+                                let type = seat['type'] === 'unavailable'? 'adulto' : 'bambino';
                                 let row = seat['id'].substring(0,1);
                                 let sector = "";
-                                switch (seat['id'].substring(2, 3)) {
+                                switch (seat['id'].substring(1, 2)) {
                                     case "S": sector = "sinistro"; break;
                                     case "C": sector = "centrale"; break;
                                     case "D": sector = "destro"; break;
                                 }
 
-                                let s = seat['id'].substring(3,seat['id'].length);
+                                let s = seat['id'].substring(2,seat['id'].length);
                                 resp_string +=  "Fila " + row + " - " +
                                     "Settore " + sector + " - " +
                                     "Posto " + s + " " + type + "\n";
