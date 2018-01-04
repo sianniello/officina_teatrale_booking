@@ -232,7 +232,6 @@ function start(data) {
             $('.loader').show();
             booking.timestamp = new Date().toISOString();
             booking.user = sessionStorage.getItem('user');
-            booking.seats.forEach(seat => {seat.id = seat.id.replace("_", "")});
             $.ajax({
                     type: "POST",
                     contentType:"application/json; charset=utf-8",
