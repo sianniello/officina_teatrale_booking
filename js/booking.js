@@ -31,38 +31,6 @@ $(document).ready(function()
     }
 });
 
-function seat_formatting(seat_map, rows, columns)
-{
-    rows.forEach((row, row_index) => {
-
-            if (row === ' ') {
-                seat_map.splice(row_index, 0, '_'.repeat(16 + 15 + 16).split(""));
-                columns.splice(row_index, 0, [0, 0, 0]);
-            }
-        }
-    );
-    console.log(seat_map);
-    seat_map.forEach((seat_row, index) =>
-        {
-            if (seat_row[0] !== "_") {
-                let col = columns[index];
-                let sx = seat_row.slice(0, col[0]);
-                let cn = seat_row.slice(col[0], col[0] + col[1]);
-                let dx = seat_row.slice(col[0] + col[1], col[0] + col[1] + col[2]);
-                let sx_str = sx.join("").padEnd(16 + 1, "_");
-                let cn_str = cn.join("").padEnd(15 + 1, "_");
-                let dx_str = dx.join("").padEnd(16 + 1, "_");
-                seat_row = sx_str + cn_str + dx_str;
-                seat_map[index] = seat_row;
-            }
-            else
-                seat_map[index] = seat_row.join("");
-
-        }
-    );
-    console.log(seat_map);
-    return seat_map;
-}
 
 function start(data) {
 
@@ -80,7 +48,7 @@ function start(data) {
     ];
 
 
-    let map = seat_formatting(data['seat_map'], data.rows, data.columns);
+    let map = data['seat_map'];
 
 
     let $cart = $('#selected-seats'),
