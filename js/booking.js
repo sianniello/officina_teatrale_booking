@@ -79,7 +79,6 @@ function start(data) {
         "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15", "D16",
     ];
 
-    data.rows.forEach((row, row_index) => { if (row_index === 7 || row_index === 16) data.rows.splice(row_index, 0, " ") });
 
     let map = seat_formatting(data['seat_map'], data.rows, data.columns);
 
