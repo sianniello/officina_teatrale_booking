@@ -48,7 +48,7 @@ function seat_formatting(seat_map, rows, columns)
                 let col = columns[index];
                 let sx = seat_row.slice(0, col[0]);
                 let cn = seat_row.slice(col[0], col[0] + col[1]);
-                let dx = seat_row.slice(col[1], col[1] + col[2]);
+                let dx = seat_row.slice(col[0] + col[1], col[1] + col[2]);
                 let sx_str = sx.join("").padEnd(16 + 1, "_");
                 let cn_str = cn.join("").padEnd(15 + 1, "_");
                 let dx_str = dx.join("").padEnd(16 + 1, "_");
