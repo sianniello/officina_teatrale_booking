@@ -20,8 +20,8 @@ a {
     width: 100%;
     text-align: center;
 }
-.container {
-    margin: 0 auto;
+.custom-container {
+    margin: auto 5px;
     width: auto;
     text-align: left;
 }
