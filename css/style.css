@@ -265,8 +265,8 @@ body {
     display: none;
 }
 
-.modal-dialog.modal-sm.custom-modal
+.custom-modal
 {
-    width: 60%;
+    /*width: 60%;*/
     font-size: 50px;
 }

@@ -13,16 +13,20 @@ function validate(){
                 $('.loader').hide();
                 sessionStorage.setItem('user', username);
                 let suxfiss = data.sex === 'M'? 'o ' : 'a ';
-                bootbox.alert({
+                let login_dialog = bootbox.dialog({
                     message: "Accesso effettuato, benvenut" + suxfiss +
                     data['full_name'].split(" ")[0],
                     callback: () =>
                     {
                         location.reload();
                     },
-                    size: 'small'
+                    className: 'custom-modal',
+                    backdrop: true,
                 });
-                $('.modal-dialog.modal-sm').addClass('custom-modal');
+                login_dialog.init(() => {setTimeout(() => {
+                    login_dialog.hide();
+                    location.reload();
+                }, 3000)});
             }
             else
                 alert("username o password errati");
