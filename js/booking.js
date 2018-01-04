@@ -36,11 +36,12 @@ function seat_formatting(seat_map, rows, columns)
     rows.forEach((row, row_index) => {
 
             if (row === ' ') {
-                seat_map.splice(row_index, 1, '_'.repeat(16 + 15 + 16).split(""));
-                seat_map[row_index] = seat_map[row_index].join("");
+                seat_map.splice(row_index, 0, '_'.repeat(16 + 15 + 16).split(""));
+                columns.splice(row_index, 0, [0, 0, 0]);
             }
         }
     );
+    console.log(seat_map);
     seat_map.forEach((seat_row, index) =>
         {
             if (seat_row[0] !== "_") {
@@ -54,6 +55,9 @@ function seat_formatting(seat_map, rows, columns)
                 seat_row = sx_str + cn_str + dx_str;
                 seat_map[index] = seat_row;
             }
+            else
+                seat_map[index] = seat_row.join("");
+
         }
     );
     console.log(seat_map);
@@ -74,6 +78,9 @@ function start(data) {
         "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15", "",
         "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15", "D16",
     ];
+
+    data.rows.forEach((row, row_index) => { if (row_index === 7 || row_index === 16) data.rows.splice(row_index, 0, " ") });
+
     let map = seat_formatting(data['seat_map'], data.rows, data.columns);
 
 
