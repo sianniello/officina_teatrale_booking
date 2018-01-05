@@ -33,14 +33,7 @@ a {
     height: 401px;
     font-size: 25px;
 }
-.booking-details {
-    margin: 25px 0 20px 0;
-    font-size: 27px;
-}
-.booking-details {
-    margin: 5px 5px 0 0;
-    font-size: 40px;
-}
+
 div.seatCharts-cell {
     color: #182C4E;
     height: 35px;
@@ -108,10 +101,12 @@ span.seatCharts-legendDescription {
 .checkout-button {
     display: block;
     margin: 20px auto;
-    font-size: 35px;
+    font-size: 40px;
     width: 40%;
     background-color: lime;
     border-radius: 8px;
+    height: 20%;
+    color: white;
 }
 #selected-seats {
     /*max-height: 90px;*/
@@ -256,8 +251,8 @@ body {
     -o-filter: blur(5px);
     -ms-filter: blur(5px);
     filter: blur(5px);
-    width: 100px;
-    height: 100px;
+    /*width: 100px;*/
+    /*height: 100px;*/
     background-color: #ccc;
 }
 
@@ -265,8 +260,19 @@ body {
     display: none;
 }
 
-.custom-modal
+.custom-modal .modal-content
 {
-    /*width: 60%;*/
+    margin-top: 25%;
     font-size: 50px;
+}
+
+.custom-feedback-modal .modal-content {
+    margin-top: 25%;
+    font-size: 40px;
+}
+
+.btn.custom-btn-ok{
+    font-size: 30px;
+    background-color: lime;
+    color: whitesmoke;
 }

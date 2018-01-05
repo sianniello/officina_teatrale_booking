@@ -21,6 +21,7 @@ function validate(){
                         location.reload();
                     },
                     className: 'custom-modal',
+                    closeButton: true,
                     backdrop: true,
                 });
                 login_dialog.init(() => {setTimeout(() => {

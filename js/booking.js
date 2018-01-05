@@ -51,9 +51,9 @@ function start(data) {
     let map = data['seat_map'];
 
 
-    let $cart = $('#selected-seats'),
-        $counter = $('#counter'),
-        $total = $('#total'),
+    let $cart =     $('#selected-seats'),
+        $counter =  $('#counter'),
+        $total =    $('#total'),
 
         sc = $('#seat-map').seatCharts({
             map: map,
@@ -213,28 +213,45 @@ function start(data) {
                     data: JSON.stringify(booking),
                     success: data =>
                     {
+                        console.log(data);
                         $('.loader').hide();
                         let resp_string = "";
-                        data.seats.forEach(seat =>
-                            {
-                                let type = seat['type'] === 'unavailable'? 'adulto' : 'bambino';
-                                let row = seat['id'].substring(0,1);
-                                let sector = "";
-                                switch (seat['id'].substring(1, 2)) {
-                                    case "S": sector = "sinistro"; break;
-                                    case "C": sector = "centrale"; break;
-                                    case "D": sector = "destro"; break;
-                                }
+                        if (!data.errorMessage)
+                            data.seats.forEach(seat =>
+                                {
+                                    let type = seat['type'] === 'unavailable'? 'adulto' : 'bambino';
+                                    let row = seat['id'].substring(0,1);
+                                    let sector = "";
+                                    switch (seat['id'].substring(1, 2)) {
+                                        case "S": sector = "sinistro"; break;
+                                        case "C": sector = "centrale"; break;
+                                        case "D": sector = "destro"; break;
+                                    }
 
-                                let s = seat['id'].substring(2,seat['id'].length);
-                                resp_string +=  "Fila " + row + " - " +
-                                    "Settore " + sector + " - " +
-                                    "Posto " + s + " " + type + "\n";
-                            }
-                        );
-                        alert("Prenotazione effettuata\n" + resp_string);
-                        location.reload();
-                    },
+                                    let s = seat['id'].substring(2,seat['id'].length);
+                                    resp_string +=  "\nFila " + row + " - " +
+                                        "Settore " + sector + " - " +
+                                        "Posto " + s + " " + type + "\n";
+
+                                    let feedback_dialog = bootbox.alert({
+                                        message: "Prenotazione effettuata:" + resp_string,
+                                        className: 'custom-feedback-modal',
+                                        buttons: {
+                                            ok: {
+                                                label: "OK",
+                                                className: "custom-btn-ok"
+                                            }
+                                        },
+                                        callback: () => {location.reload()}
+                                    });
+                                }
+                            );
+
+                        else alert("Prenotazione non riuscita. \n" +
+                            "Si prega di aggiornare la pagina e ripovare");
+
+                    },  //success
+
                     error: (error, status) =>
                     {
                         $('.loader').hide();
