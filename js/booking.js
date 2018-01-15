@@ -50,6 +50,17 @@ function start(data) {
 
     let map = data['seat_map'];
 
+    map.forEach((row, rowIndex) => {
+        let rowArray = row.split("");
+        rowArray.forEach((seat, seatIndex) => {
+            if (seat !== '_')
+                rowArray[seatIndex] = seat + '[,' + data['rows'][rowIndex] + columns[seatIndex] + ']'
+
+        });
+        map[rowIndex] = rowArray.join("");
+    });
+
+    console.log(map);
 
     let $cart =     $('#selected-seats'),
         $counter =  $('#counter'),
@@ -252,10 +263,11 @@ function start(data) {
 
                     },  //success
 
-                    error: (error, status) =>
+                    error: () =>
                     {
                         $('.loader').hide();
-                        alert("Error: " + status);
+                        alert("Prenotazione non riuscita. \n" +
+                            "Si prega di aggiornare la pagina e ripovare");
                         location.reload();
                     }
                 }
