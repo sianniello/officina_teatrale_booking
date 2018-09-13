@@ -1,14 +1,12 @@
 let url = 'https://i2pn7or762.execute-api.us-east-1.amazonaws.com/prod/';
 // let url = 'http://officinateatrale.hopto.org:5000/bookings';
 // let url = 'http://localhost:5000/bookings';
-
-$('.form').show();
-$('.wrapper').hide();
-
-$(document).ready(function()
-{
-    if (!sessionStorage.getItem('user')) { $('.form').show(); $('.wrapper').hide(); }
-    else {
+$('.loader').hide();
+$(document).ready(function () {
+    if (!sessionStorage.getItem('user')) {
+        $('.form').show();
+        $('.wrapper').hide();
+    } else {
         $('.booking-details').hide();
         $('.form').hide();
         $('.loader').show();
@@ -21,7 +19,7 @@ $(document).ready(function()
                 $('.booking-details').show();
                 $('.wrapper').show();
                 console.log(data);
-                start(data)
+                start(data);
             },
             error: e => {
                 $('.loader').hide();
@@ -33,7 +31,7 @@ $(document).ready(function()
 
 
 function start(data) {
-
+    $('#username').text(sessionStorage.getItem('user'));
     let booking = {
         user: '',
         seats: [],
@@ -62,17 +60,17 @@ function start(data) {
 
     console.log(map);
 
-    let $cart =     $('#selected-seats'),
-        $counter =  $('#counter'),
-        $total =    $('#total'),
+    let $cart = $('#selected-seats'),
+        $counter = $('#counter'),
+        $total = $('#total'),
 
         sc = $('#seat-map').seatCharts({
             map: map,
             seats: {
                 f: {
-                    price   : 12,
+                    price: 12,
                     category: 'adulto',
-                    classes : 'my_available', //custom CSS class
+                    classes: 'my_available', //custom CSS class
                 },
                 c: {
                     category: 'bambino',
@@ -82,32 +80,37 @@ function start(data) {
                     classes: 'my_unavailable_reserved'
                 }
             },
-            naming : {
-                top : true,
+            naming: {
+                top: true,
                 columns: columns,
                 rows: data.rows,
             },
-            legend : {
-                node : $('#legend'),
-                items : [
-                    [ 'f', 'available',     'Libero' ],
-                    [ 'c', 'unavailable',   'Prenotato Bambino' ],
-                    [ 'b', 'unavailable',   'Preonotato Adulto'],
-                    [ 'r', 'unavailable',   'Riservato']
+            legend: {
+                node: $('#legend'),
+                items: [
+                    ['f', 'available', 'Libero'],
+                    ['c', 'unavailable', 'Prenotato Bambino'],
+                    ['b', 'unavailable', 'Preonotato Adulto'],
+                    ['r', 'unavailable', 'Riservato']
                 ]
             },
             click: function () {
-                if (this.settings.id)
-                {
+                if (this.settings.id) {
                     this.data().category = 'adulto';
                     this.data().price = 12;
 
-                    let row = this.settings.id.substring(0,1);
+                    let row = this.settings.id.substring(0, 1);
                     let sector = "";
                     switch (this.settings.id.substring(2, 3)) {
-                        case "S": sector = "sinistro"; break;
-                        case "C": sector = "centrale"; break;
-                        case "D": sector = "destro"; break;
+                        case "S":
+                            sector = "sinistro";
+                            break;
+                        case "C":
+                            sector = "centrale";
+                            break;
+                        case "D":
+                            sector = "destro";
+                            break;
                     }
 
                     let seat = this.settings.id.substring(3, this.settings.id.length);
@@ -115,10 +118,10 @@ function start(data) {
                     if (this.status() === 'available') {
                         //let's create a new <li> which we'll add to the cart items
                         $('<li>Posto ' + this.data().category +
-                            ' Fila: ' + row +
-                            ' - Settore: '+ sector +
-                            ' - Posto: ' + seat +
-                            ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                                ' Fila: ' + row +
+                                ' - Settore: ' + sector +
+                                ' - Posto: ' + seat +
+                                ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
                             .data('seatId', this.settings.id)
                             .addClass('li-item')
@@ -132,7 +135,10 @@ function start(data) {
                          */
 
                         booking.total = recalculateTotal($total);
-                        booking.seats.push({id: this.settings.id, type: 'unavailable'});
+                        booking.seats.push({
+                            id: this.settings.id,
+                            type: 'unavailable'
+                        });
                         $counter.text(booking.seats.length);
 
                         if (booking.seats.length || parseInt($counter.text()) > 0) $('.checkout-button').removeClass('hidden');
@@ -145,10 +151,10 @@ function start(data) {
                         this.data().category = 'bambino';
                         this.data().price = 0;
                         let item = $('<li>Posto ' + this.data().category +
-                            ' Fila: ' + row +
-                            ' - settore: '+ sector +
-                            ' - posto: ' + seat +
-                            ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
+                                ' Fila: ' + row +
+                                ' - settore: ' + sector +
+                                ' - posto: ' + seat +
+                                ' <b>€ <span class="price">' + this.data().price + '</span></b> <a href="#" class="cancel-cart-item">[annulla]</a></li>')
                             .attr('id', 'cart-item-' + this.settings.id)
                             .addClass('li-item')
                             .data('seatId', this.settings.id);
@@ -189,7 +195,7 @@ function start(data) {
                         return this.style();
                     }
 
-                }   //func
+                } //func
             }
         });
 
@@ -201,7 +207,9 @@ function start(data) {
 
         sc.status(seat_ID, 'available');
 
-        let index = booking.seats.indexOf(booking.seats.find(item => {return item.id === seat_ID}));
+        let index = booking.seats.indexOf(booking.seats.find(item => {
+            return item.id === seat_ID
+        }));
         booking.seats.splice(index, 1);
 
         if (booking.seats.length === 0) $('.checkout-button').addClass('hidden');
@@ -218,60 +226,50 @@ function start(data) {
             booking.timestamp = new Date().toISOString();
             booking.user = sessionStorage.getItem('user');
             $.ajax({
-                    type: "POST",
-                    contentType:"application/json; charset=utf-8",
-                    url: url + "MongoDB_Atlas_AddDocs",
-                    data: JSON.stringify(booking),
-                    success: data =>
-                    {
-                        console.log(data);
-                        $('.loader').hide();
-                        let resp_string = "";
-                        if (!data.errorMessage)
-                            data.seats.forEach(seat =>
-                                {
-                                    let type = seat['type'] === 'unavailable'? 'adulto' : 'bambino';
-                                    let row = seat['id'].substring(0,1);
-                                    let sector = "";
-                                    switch (seat['id'].substring(1, 2)) {
-                                        case "S": sector = "sinistro"; break;
-                                        case "C": sector = "centrale"; break;
-                                        case "D": sector = "destro"; break;
-                                    }
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: url + "MongoDB_Atlas_AddDocs",
+                data: JSON.stringify(booking),
+                success: data => {
+                    console.log(data);
+                    $('.loader').hide();
+                    let resp_string = "";
+                    if (!data.errorMessage) {
+                        data.seats.forEach(seat => {
+                            let type = seat['type'] === 'unavailable' ? 'adulto' : 'bambino';
+                            let row = seat['id'].substring(0, 1);
+                            let sector = "";
+                            switch (seat['id'].substring(1, 2)) {
+                                case "S":
+                                    sector = "sinistro";
+                                    break;
+                                case "C":
+                                    sector = "centrale";
+                                    break;
+                                case "D":
+                                    sector = "destro";
+                                    break;
+                            }
 
-                                    let s = seat['id'].substring(2,seat['id'].length);
-                                    resp_string +=  "\nFila " + row + " - " +
-                                        "Settore " + sector + " - " +
-                                        "Posto " + s + " " + type + "\n";
+                            let s = seat['id'].substring(2, seat['id'].length);
+                            resp_string += "\nFila " + row + " - " + "Settore " + sector + " - " + "Posto " + s + " " + type;
 
-                                    let feedback_dialog = bootbox.alert({
-                                        message: "Prenotazione effettuata:" + resp_string,
-                                        className: 'custom-feedback-modal',
-                                        buttons: {
-                                            ok: {
-                                                label: "OK",
-                                                className: "custom-btn-ok"
-                                            }
-                                        },
-                                        callback: () => {location.reload()}
-                                    });
-                                }
-                            );
-
-                        else alert("Prenotazione non riuscita. \n" +
-                            "Si prega di aggiornare la pagina e ripovare");
-
-                    },  //success
-
-                    error: () =>
-                    {
-                        $('.loader').hide();
-                        alert("Prenotazione non riuscita. \n" +
-                            "Si prega di aggiornare la pagina e ripovare");
-                        location.reload();
+                        });
+                        alert("Prenotazione effettuata:" + resp_string);
+                        window.location.reload();
                     }
+                    else alert("Prenotazione non riuscita. \n" +
+                        "Si prega di aggiornare la pagina e ripovare");
+
+                }, //success
+
+                error: () => {
+                    $('.loader').hide();
+                    alert("Prenotazione non riuscita. \n" +
+                        "Si prega di aggiornare la pagina e ripovare");
+                    location.reload();
                 }
-            )
+            })
         }
     });
 
@@ -285,9 +283,10 @@ function start(data) {
 function recalculateTotal($total) {
     let total = 0;
     //basically find every selected seat and sum its price
-    $('span' + '.price').each(function () {total += parseInt(this.innerText)});
+    $('span' + '.price').each(function () {
+        total += parseInt(this.innerText)
+    });
 
     $total.text(total);
     return total;
 }
-
