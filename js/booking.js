@@ -149,7 +149,7 @@ function start(data) {
                     } else if (this.status() === 'selected') {
 
                         this.data().category = 'bambino';
-                        this.data().price = 0;
+                        this.data().price = 6;
                         let item = $('<li>Posto ' + this.data().category +
                                 ' Fila: ' + row +
                                 ' - settore: ' + sector +
